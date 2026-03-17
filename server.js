@@ -20,29 +20,38 @@ const adminAuth = basicAuth({
     realm: 'Admin Dashboard'
 });
 
-// Protect the dashboard HTML page specifically before static middleware
-app.get('/dashboard.html', adminAuth, (req, res, next) => {
-    next();
-});
-
-// Protect the dashboard assets if needed (dashboard.js, dashboard.css)
+// Protect dashboard routes
+app.get('/dashboard.html', adminAuth, (req, res, next) => next());
 app.get('/dashboard.js', adminAuth, (req, res, next) => next());
 app.get('/dashboard.css', adminAuth, (req, res, next) => next());
 
-// Serve static files from the 'public' directory
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio')
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
+// ✅ MongoDB Connection (FIXED)
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log('✅ Connected to MongoDB'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Routes
+
 // POST: Submit a contact form
 app.post('/api/contact', async (req, res) => {
     try {
         const Contact = require('./models/Contact');
+
         const { name, email, message } = req.body;
+
+        // ✅ Basic validation (added)
+        if (!name || !email || !message) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required'
+            });
+        }
 
         const newContact = new Contact({
             name,
@@ -51,26 +60,40 @@ app.post('/api/contact', async (req, res) => {
         });
 
         await newContact.save();
-        res.status(201).json({ success: true, message: 'Message sent successfully!' });
+
+        res.status(201).json({
+            success: true,
+            message: 'Message sent successfully!'
+        });
+
     } catch (error) {
-        console.error('Error saving contact:', error);
-        res.status(500).json({ success: false, message: 'Server error. Please try again later.' });
+        console.error('❌ Error saving contact:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error. Please try again later.'
+        });
     }
 });
 
-// GET: Fetch all messages for the dashboard (Protected)
+// GET: Fetch all messages (Protected)
 app.get('/api/messages', adminAuth, async (req, res) => {
     try {
         const Contact = require('./models/Contact');
+
         const messages = await Contact.find().sort({ date: -1 });
+
         res.status(200).json(messages);
+
     } catch (error) {
-        console.error('Error fetching messages:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('❌ Error fetching messages:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
     }
 });
 
-// Start the server
+// Start server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
