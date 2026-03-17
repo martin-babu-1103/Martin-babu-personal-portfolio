@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Contact Messages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div id="blob"></div>
+    <div id="blur"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo">Admin<span>Panel</span></h1>
+            <a href="index.html" class="back-link">← Back to Portfolio</a>
+        </div>
+    </nav>
+
+    <main class="dashboard-main">
+        <header class="dashboard-header">
+            <h2>Contact Submissions</h2>
+            <div class="stats">
+                <div class="stat-card glass-panel">
+                    <h3>Total Messages</h3>
+                    <p id="total-messages">0</p>
+                </div>
+            </div>
+        </header>
+
+        <section class="messages-container glass-panel">
+            <div class="messages-list" id="messages-list">
+                <div class="loading">Loading messages...</div>
+            </div>
+        </section>
+    </main>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
