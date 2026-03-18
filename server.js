@@ -29,10 +29,7 @@ app.get('/dashboard.css', adminAuth, (req, res, next) => next());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ✅ MongoDB Connection (FIXED)
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => console.log('✅ Connected to MongoDB'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
